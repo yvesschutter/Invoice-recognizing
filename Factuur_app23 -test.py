@@ -53,14 +53,13 @@ from spacy.tokens import DocBin
 from spacy.util import minibatch, compounding, filter_spans
 from spacy.training import Example
 import pandas as pd
-import numpy as np
 from PIL import Image, ImageTk
 import pytesseract
 from pdf2image import convert_from_path
 import re
 import time
 import threading
-import openpyxl
+import random
 import sqlite3  # Voor opslag van trainingscorrecties
 
 # -------------------------------------
@@ -77,7 +76,7 @@ def get_resource_path(relative_path):
 ##############################################################################
 # Configuratie
 ##############################################################################
-CONFIG_FILE = r"J:\05. ALGEMENE BEDRIJFSINFO\07. ICT\Project_it\Aankoopfacturatie\Factuur_app\config.json"
+CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
 # -------------------------------------
 # Stel paden voor Tesseract en Poppler in
@@ -675,7 +674,7 @@ def train_spacy_model_field_from_db(field: str, output_dir: str, base_model: str
         optimizer = nlp.begin_training()
         for itn in range(n_iter):
             losses = {}
-            np.random.shuffle(train_docs)
+            random.shuffle(train_docs)
             batches = minibatch(train_docs, size=compounding(4., 32., 1.001))
             for batch in batches:
                 examples = []
